@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "component.schema.json",
+  "title": "AI Supply Chain component card",
+  "description": "One file per component. See docs/spec-v1.0.md sections 5.2-5.4.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "tier", "name", "summary", "what_it_does", "makers", "concentration",
+    "cost", "lead_time", "inputs", "customers", "chokepoint_notes", "sources", "meta"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "tier": { "type": "string", "pattern": "^T[0-9]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string" },
+    "what_it_does": { "type": "string" },
+
+    "makers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["company", "country", "market_share"],
+        "properties": {
+          "company": { "type": "string", "minLength": 1 },
+          "country": { "type": ["string", "null"], "pattern": "^[A-Z]{2}$" },
+          "hq_city": { "type": ["string", "null"] },
+          "fab_locations": { "type": "array", "items": { "type": "string" } },
+          "market_share": { "$ref": "#/$defs/sourced_value" }
+        }
+      }
+    },
+
+    "concentration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "hhi", "note"],
+      "properties": {
+        "label": {
+          "type": ["string", "null"],
+          "enum": ["monopoly", "duopoly", "oligopoly", "competitive", null]
+        },
+        "hhi": { "$ref": "#/$defs/sourced_value" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "price_band", "note"],
+      "properties": {
+        "unit": { "type": ["string", "null"] },
+        "price_band": { "$ref": "#/$defs/price_band" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "lead_time": { "$ref": "#/$defs/sourced_value" },
+
+    "inputs": { "$ref": "#/$defs/id_list" },
+    "customers": { "$ref": "#/$defs/id_list" },
+
+    "chokepoint_notes": { "type": "string" },
+
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "publisher", "url", "date", "accessed", "type"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^src-[0-9]{3}$" },
+          "title": { "type": "string", "minLength": 1 },
+          "publisher": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "pattern": "^https?://" },
+          "date": { "$ref": "#/$defs/date_or_null" },
+          "accessed": { "$ref": "#/$defs/date" },
+          "type": {
+            "type": "string",
+            "enum": ["analyst", "company-filing", "news", "government", "academic"]
+          }
+        }
+      }
+    },
+
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["draft", "verified", "approved"] },
+        "drafted_by": { "type": ["string", "null"] },
+        "verified_by": { "type": ["string", "null"] },
+        "approved_by": { "type": ["string", "null"] },
+        "approved_on": { "$ref": "#/$defs/date_or_null" },
+        "last_refreshed": { "$ref": "#/$defs/date_or_null" }
+      }
+    }
+  },
+
+  "$defs": {
+    "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "date_or_null": {
+      "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+    },
+    "confidence": {
+      "type": ["string", "null"],
+      "enum": ["high", "medium", "low", null]
+    },
+    "id_list": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+    },
+    "sourced_value": {
+      "description": "Spec 5.3. Every number is one of these, never a bare number. null is allowed in drafts; it means 'not found', never 'guessed'.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "source", "confidence", "verified"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "unit": { "type": "string" },
+        "source": { "type": ["string", "null"] },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "verified": { "$ref": "#/$defs/date_or_null" }
+      }
+    },
+    "price_band": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low", "high", "currency", "source", "confidence", "verified"],
+      "properties": {
+        "low": { "type": ["number", "null"] },
+        "high": { "type": ["number", "null"] },
+        "currency": { "type": "string" },
+        "source": { "type": ["string", "null"] },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "verified": { "$ref": "#/$defs/date_or_null" }
+      }
+    }
+  }
+}

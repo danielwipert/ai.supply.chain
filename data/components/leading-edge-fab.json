@@ -1,0 +1,75 @@
+{
+  "id": "leading-edge-fab",
+  "tier": "T2",
+  "name": "Leading-edge logic fabrication (3nm/2nm class)",
+  "summary": "",
+  "what_it_does": "",
+  "makers": [
+    {
+      "company": "TSMC",
+      "country": "TW",
+      "hq_city": null,
+      "fab_locations": [],
+      "market_share": {
+        "value": null,
+        "unit": "share",
+        "source": null,
+        "confidence": null,
+        "verified": null
+      }
+    }
+  ],
+  "concentration": {
+    "label": null,
+    "hhi": {
+      "value": null,
+      "unit": "index",
+      "source": null,
+      "confidence": null,
+      "verified": null
+    },
+    "note": ""
+  },
+  "cost": {
+    "unit": "per wafer",
+    "price_band": {
+      "low": null,
+      "high": null,
+      "currency": "USD",
+      "source": null,
+      "confidence": null,
+      "verified": null
+    },
+    "note": ""
+  },
+  "lead_time": {
+    "value": null,
+    "unit": "weeks",
+    "source": null,
+    "confidence": null,
+    "verified": null
+  },
+  "inputs": [
+    "euv-lithography",
+    "duv-lithography",
+    "deposition-etch"
+  ],
+  "customers": [
+    "nvidia-gpu",
+    "amd-instinct",
+    "google-tpu",
+    "aws-trainium",
+    "microsoft-maia",
+    "inference-asics"
+  ],
+  "chokepoint_notes": "",
+  "sources": [],
+  "meta": {
+    "status": "draft",
+    "drafted_by": null,
+    "verified_by": null,
+    "approved_by": null,
+    "approved_on": null,
+    "last_refreshed": null
+  }
+}

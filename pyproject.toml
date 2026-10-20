@@ -1,0 +1,9 @@
+[project]
+name = "ai-supply-chain"
+version = "0.1.0"
+description = "A sourced, maintained map of the AI compute supply chain"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
