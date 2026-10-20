@@ -18,6 +18,8 @@ data/
 pipeline/                  # research + validation scripts
   data.py                  # loads data/ (shared by site and PDF builds)
   validate.py              # checks schema + graph rules
+  providers/               # LLM (OpenRouter), search (Tavily), fetch (readability)
+  check_providers.py       # one real call to each provider, to test your keys
   reports/                 # verification reports (pipeline output)
 site/                      # static site build (coming)
 pdf/                       # PDF build (coming)
@@ -51,11 +53,28 @@ docs/                      # spec, decisions
 
 GitHub Actions runs steps 2 and 3 on every push.
 
+## API keys
+
+The research pipeline needs two keys, set as environment variables. Never put them in the code.
+
+| Variable | Used for | Get one at |
+|---|---|---|
+| `OPENROUTER_API_KEY` | LLM calls (draft + verify) | openrouter.ai → Keys |
+| `TAVILY_API_KEY` | Web search | tavily.com → dashboard |
+
+In a Claude Code cloud session, add them in the environment settings (the environment menu in the session's title bar → Edit), then start a new session. On your own computer, run `export TAVILY_API_KEY=...` in the terminal first.
+
+To check the keys work (one tiny real call to each service):
+
+```bash
+python -m pipeline.check_providers
+```
+
 ## Phase 1 progress
 
 - [x] Repo layout, schema, `tiers.json`, roster, validator
 - [x] Skeleton cards for `euv-lithography`, `leading-edge-fab`, `hbm` (no numbers yet)
-- [ ] Pipeline: provider interfaces (LLM, search, fetch)
+- [x] Pipeline: provider interfaces (LLM, search, fetch) in `pipeline/providers/`
 - [ ] Pipeline: `draft.py` and `verify.py` on the three cards
 - [ ] Dan approves the three cards
 - [ ] Site: flow map + component pages

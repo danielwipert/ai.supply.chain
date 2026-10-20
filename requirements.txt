@@ -1,2 +1,5 @@
 jsonschema>=4.20
 pytest>=8.0
+requests>=2.31
+readability-lxml>=0.8
+lxml_html_clean>=0.1
