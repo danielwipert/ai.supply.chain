@@ -142,9 +142,14 @@ def test_expected_label(shares, label):
     assert expected_label(shares) == label
 
 
-def test_tier_distance_warns(data_dir):
+def test_equipment_may_feed_memory_fabs(data_dir):
     write(data_dir, make_card("euv-lithography", "T1", customers=["hbm"]))
     write(data_dir, make_card("hbm", "T4", inputs=["euv-lithography"]))
     report = validate(data_dir)
-    assert report.ok
-    assert any("tiers apart" in w for w in report.warnings)
+    assert report.ok, report.errors
+
+
+def test_tier_distance_too_far_fails(data_dir):
+    write(data_dir, make_card("leading-edge-fab", "T2", customers=["gpu-servers-oem"]))
+    write(data_dir, make_card("gpu-servers-oem", "T6", inputs=["leading-edge-fab"]))
+    assert any("tiers apart" in e for e in validate(data_dir).errors)

@@ -18,6 +18,15 @@ from pipeline.data import DATA_DIR, load_components, load_roster, load_schema, l
 
 # Spec 5.5: a component may not reference a tier more than this many steps away.
 MAX_TIER_DISTANCE = 2
+# Exception (docs/decisions.md, gate 2026-10-20): fab equipment may feed any tier that runs fabs.
+EQUIPMENT_TIER = "T1"
+FAB_TIERS = {"T2", "T4"}
+
+
+def tier_link_allowed(tier_a: str, tier_b: str, tier_order: dict) -> bool:
+    if {tier_a, tier_b} & {EQUIPMENT_TIER} and {tier_a, tier_b} & FAB_TIERS:
+        return True
+    return abs(tier_order[tier_a] - tier_order[tier_b]) <= MAX_TIER_DISTANCE
 
 
 @dataclass
@@ -119,14 +128,13 @@ def check_graph(components: dict, roster: dict, tier_order: dict, strict: bool, 
                         f"{cid}: lists {ref} in '{field_name}', but {ref} does not list {cid} in '{reverse_name}'"
                     )
 
-        # Tier distance. A warning for now -- see the open question in docs/decisions.md.
-        mine = tier_order.get(card.get("tier"))
+        # Tier distance.
+        my_tier = card.get("tier")
         for ref in card.get("inputs", []) + card.get("customers", []):
             ref_tier = (components.get(ref) or roster.get(ref) or {}).get("tier")
-            theirs = tier_order.get(ref_tier)
-            if mine is not None and theirs is not None and abs(mine - theirs) > MAX_TIER_DISTANCE:
-                report.warnings.append(
-                    f"{cid} ({card['tier']}) -> {ref} ({ref_tier}): more than {MAX_TIER_DISTANCE} tiers apart"
+            if my_tier in tier_order and ref_tier in tier_order and not tier_link_allowed(my_tier, ref_tier, tier_order):
+                report.errors.append(
+                    f"{cid} ({my_tier}) -> {ref} ({ref_tier}): more than {MAX_TIER_DISTANCE} tiers apart"
                 )
 
 
