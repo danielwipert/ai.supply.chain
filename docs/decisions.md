@@ -11,7 +11,9 @@ Running log of decisions made during the build. The locked planning gates are in
 | 2026-10-20 | Sourced values may be `null` (value, source, confidence, verified) while a card is a draft | Spec 6.2: the draft model "may write `null` but may not invent". `approved` cards must have `source` and `verified` |
 | 2026-10-20 | Concentration label vs. market shares mismatch is a warning, not an error | Shares are often partial or estimated; Dan makes the call |
 | 2026-10-20 | **Gate: tier-distance rule.** Keep the 2-tier limit (spec 5.5), but T1 equipment may feed any tier that runs fabs (T2, T4). Too-far links are now errors | HBM (T4) really is made with T1 tools; the rule still blocks odd links. Lives in `pipeline/validate.py` (`tier_link_allowed`) |
-| 2026-10-20 | **Gate: search API.** Tavily for `SearchProvider` (settles spec 10.1) | Built for AI agents, returns page text, free tier to start. Lives in `pipeline/providers/` (coming) |
+| 2026-10-20 | **Gate: search API.** Tavily for `SearchProvider` (settles spec 10.1) | Built for AI agents, returns page text, free tier to start. Lives in `pipeline/providers/tavily.py` |
+| 2026-10-20 | **Gate: draft model.** DeepSeek V4.1 Flash (`deepseek/deepseek-v4.1-flash`) | Cheapest option. Risk of broken JSON or guesses is covered by schema-check + retry in `draft.py` and by the verify step. Lives in `pipeline/config.py` |
+| 2026-10-20 | **Gate: verify model.** GPT-6.1 Sol (`openai/gpt-6.1-sol`), $2 / $10 per M tokens | Top-tier, different family from the drafter, about half the cost of Opus 5.5 (~$10 per full 27-card run). Lives in `pipeline/config.py` |
 
 ## Open questions
 
