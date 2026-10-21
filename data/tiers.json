@@ -1,11 +1,14 @@
 [
-  {"id": "T1", "order": 1, "name": "Lithography & fab equipment", "covers": "The machines that make chips"},
-  {"id": "T2", "order": 2, "name": "Wafer fabrication", "covers": "Leading-edge logic foundries"},
-  {"id": "T3", "order": 3, "name": "Chip design", "covers": "GPUs and AI accelerators"},
-  {"id": "T4", "order": 4, "name": "Memory", "covers": "High-bandwidth memory (HBM)"},
-  {"id": "T5", "order": 5, "name": "Advanced packaging", "covers": "Joining logic and memory into one package"},
-  {"id": "T6", "order": 6, "name": "Servers & networking", "covers": "GPU nodes and the fabric between them"},
-  {"id": "T7", "order": 7, "name": "Data centers & power", "covers": "Buildings, cooling, electrical, grid"},
-  {"id": "T8", "order": 8, "name": "Compute providers", "covers": "Neoclouds and hyperscalers renting GPU hours"},
-  {"id": "T9", "order": 9, "name": "Inference", "covers": "Token-serving providers and serving engines"}
+  {"id": "T1", "order": 1, "stream": "compute", "name": "Lithography & fab equipment", "covers": "The machines that make chips"},
+  {"id": "T2", "order": 2, "stream": "compute", "name": "Wafer fabrication", "covers": "Leading-edge logic foundries"},
+  {"id": "T3", "order": 3, "stream": "compute", "name": "Chip design", "covers": "GPUs and AI accelerators"},
+  {"id": "T4", "order": 4, "stream": "compute", "name": "Memory", "covers": "High-bandwidth memory (HBM)"},
+  {"id": "T5", "order": 5, "stream": "compute", "name": "Advanced packaging", "covers": "Joining logic and memory into one package"},
+  {"id": "T6", "order": 6, "stream": "compute", "name": "Servers & networking", "covers": "GPU nodes and the fabric between them"},
+  {"id": "T7", "order": 7, "stream": "compute", "name": "Data centers & power", "covers": "Buildings, cooling, electrical, grid"},
+  {"id": "T8", "order": 8, "stream": "compute", "name": "Compute providers", "covers": "Neoclouds and hyperscalers renting GPU hours"},
+  {"id": "D1", "order": 8, "stream": "data", "name": "Training inputs", "covers": "Data, human feedback and the software models are trained with"},
+  {"id": "T9", "order": 9, "stream": "trunk", "name": "Model training", "covers": "Where compute and data meet: trained models"},
+  {"id": "T10", "order": 10, "stream": "trunk", "name": "Inference", "covers": "Serving models: APIs, providers and serving engines"},
+  {"id": "T11", "order": 11, "stream": "trunk", "name": "Applications", "covers": "The AI products people use"}
 ]

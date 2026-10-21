@@ -29,7 +29,8 @@ jobs:
           python -m pipeline.validate
           python -m pytest -q
       - name: Build site
-        run: python site/build.py
+        # Served at danielwipert.github.io/<repo>/ until the custom domain is set up; then use --base-url /
+        run: python site/build.py --base-url "/${{ github.event.repository.name }}/"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist

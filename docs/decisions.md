@@ -21,6 +21,14 @@ Running log of decisions made during the build. The locked planning gates are in
 | 2026-10-21 | Map shows all 27 roster components, not only written cards. Planned links live in `roster.json` (`planned_customers`) and follow the same graph rules; a written card's own `inputs`/`customers` replace them | A 3-node map can't tell the start-to-finish story. The validator checks planned links too |
 | 2026-10-21 | Story text and short box labels live in `data/story.json` | Words can be edited without touching code. Narrative only, no numbers: numbers stay in sourced cards |
 | 2026-10-21 | Map drawn with plain JavaScript + SVG, not D3 | The layout is a fixed tier grid laid out by CSS; D3 would add a dependency for nothing. Spec 7.1 |
+| 2026-10-21 | **Gate: scope v1.1.** Add the model tributary now (training data and tools → trained models), and end the chain at applications. Raw materials and energy stay in v2 | A one-stop picture of how AI output gets made needs the data/model stream, not only compute. Amends spec 2.2 (model layer was v2) |
+| 2026-10-21 | **Gate: map shape.** A river with a tributary: Compute and Data & models flow side by side, merge at Training, then one trunk (models → inference → apps). On phones the two streams stack | Shows at a glance that AI output needs both streams |
+| 2026-10-21 | **Gate: vertical everywhere.** The map runs top to bottom on every screen size. On wide screens a box "explodes" in place into a detail panel and the story runs in a sticky side column | Replaces the 2026-10-21 horizontal-desktop decision: vertical gives room to expand |
+| 2026-10-21 | **Gate: build order.** Agree the new component list first, then rebuild the map, then run the research pipeline | Avoids building the map around a list that changes |
+| 2026-10-21 | **Component list v1.1 approved**: 10 new components (D1: web crawl data, licensed content, human data & feedback, AI software stack; T9: frontier and open-weight models; T10: model APIs; T11: chat assistants, coding agents, enterprise AI). `synthetic-data` cut. Inference renumbered T9 → T10. Roster = 37 | Labs appear as the makers of the model boxes, since a component is a product category, not a company (spec 4). Synthetic data has no clear outside makers to measure |
+| 2026-10-21 | Tiers carry a `stream` (`compute`, `data`, `trunk`); D1 has order 8 (it runs alongside T8) so the tier-distance rule lets it feed T9 | Lets the map lay out the two streams and the validator keep working unchanged |
+| 2026-10-21 | Tagline now "From EUV scanner to the AI app on your screen. Every number sourced." | The chain now ends at apps, not the inference API |
+| 2026-10-21 | The site builds with `--base-url /<repo>/` while it lives on github.io | Only the 404 page needs it. Switch the workflow to `--base-url /` when the custom domain is set up |
 
 ## Open questions
 

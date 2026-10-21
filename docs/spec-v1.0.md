@@ -3,7 +3,7 @@
 **Project:** AI Supply Chain Map (working title)
 **Owner:** Dan Wipert, Chorus AI Systems
 **Status:** Spec locked 2026-10-19 — ready for Phase 1 build
-**Version:** 1.0
+**Version:** 1.1 (amended 2026-10-21: model tributary added, see section 2.4 and `docs/decisions.md`)
 
 ---
 
@@ -44,10 +44,26 @@ Nine tiers, upstream to downstream:
 ### 2.2 Deferred to v2
 
 - **Upstream raw materials:** silicon wafers, photoresists, specialty gases (neon, helium), rare earths, substrates
-- **Model layer:** frontier labs, open-weight model families, distillation and fine-tuning services
+- **Model layer extras:** distillation and fine-tuning services (the core model layer moved into v1.1, section 2.4)
 - **Sub-components within tiers:** optical transceivers, transformers, switchgear, cooling distribution units, power generation
 
-v2 tiers slot in as T0 (materials) and T10 (models) without changing the schema.
+v2 materials slot in as T0 without changing the schema.
+
+### 2.4 v1.1 amendment: the model tributary
+
+Added 2026-10-21. The map has two streams that merge:
+
+| Tier | Stream | Name | What it covers |
+|---|---|---|---|
+| T1–T8 | compute | (as in 2.1) | Fab tools to compute providers |
+| D1 | data | Training inputs | Data, human feedback and the software models are trained with |
+| T9 | trunk | Model training | Where compute and data meet: trained models |
+| T10 | trunk | Inference | Serving models (was T9 in v1.0) |
+| T11 | trunk | Applications | The AI products people use |
+
+New components (10): `web-crawl-data`, `licensed-content`, `human-data`, `ml-frameworks` (D1);
+`frontier-models`, `open-weight-models` (T9); `model-apis` (T10); `chat-assistants`, `coding-agents`,
+`enterprise-ai` (T11). The roster is now 37 components; `data/roster.json` is the source of truth.
 
 ### 2.3 Out of scope
 

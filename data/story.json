@@ -1,10 +1,15 @@
 {
   "_note": "Narration for the map walk-through. Plain English, no numbers: numbers live in the sourced cards. Edit freely.",
   "title": "The AI Supply Chain",
-  "tagline": "From EUV scanner to inference API. Every number sourced.",
+  "tagline": "From EUV scanner to the AI app on your screen. Every number sourced.",
   "intro": {
     "headline": "Every AI answer has a supply chain.",
-    "text": "When a chatbot answers you, it runs on chips that were printed by one-of-a-kind machines, stacked with special memory, packed into servers, and plugged into buildings that draw as much power as a small city. Follow it step by step, and you'll see that a few companies at a few steps hold the whole thing together."
+    "text": "Two streams make every AI answer. One builds the computers: one-of-a-kind machines print chips, the chips are stacked with special memory, packed into servers and plugged into buildings that draw as much power as a small city. The other gathers what models learn from: text, human feedback and software. The streams meet when a model is trained, and flow on into the apps you use. A few companies at a few steps hold the whole thing together."
+  },
+  "streams": {
+    "compute": {"name": "Compute", "text": "Building the computers AI runs on"},
+    "data": {"name": "Data & models", "text": "Gathering what models learn from"},
+    "merge": {"name": "The streams meet", "text": "Compute and data come together to train a model. From here the chain is one stream, all the way to you."}
   },
   "tiers": {
     "T1": {
@@ -47,15 +52,30 @@
       "text": "Hyperscalers like AWS, Azure and Google Cloud, and newer neoclouds like CoreWeave, own the GPUs and rent them out by the hour to AI labs and companies.",
       "spotlight": "hyperscalers"
     },
+    "D1": {
+      "headline": "What models learn from",
+      "text": "A model learns from huge amounts of text, code and images scraped from the web or licensed from publishers, then from people who rate and correct its answers. All of it is processed with a software stack where one piece, Nvidia's CUDA, is as hard to replace as the chips themselves.",
+      "spotlight": "human-data"
+    },
     "T9": {
-      "headline": "Serving the answer to you",
-      "text": "Inference providers and serving software run the trained models and stream the answer back, token by token. This is the end of the chain: the part you actually see.",
-      "spotlight": "inference-providers"
+      "headline": "Training: where the streams meet",
+      "text": "AI labs rent enormous amounts of compute and feed it the training data. Weeks or months later, out comes a trained model. Some labs keep their models closed and sell access; others publish the weights for anyone to run.",
+      "spotlight": "frontier-models"
+    },
+    "T10": {
+      "headline": "Serving the model",
+      "text": "A trained model is just a file until something runs it. Labs and clouds sell access through APIs, inference providers host open-weight models, and serving software makes every chip answer as many requests as it can.",
+      "spotlight": "model-apis"
+    },
+    "T11": {
+      "headline": "The apps you actually use",
+      "text": "Chat assistants, coding tools and business apps are built on top of those APIs. This is the end of the chain: the part you see, streaming an answer back token by token.",
+      "spotlight": "chat-assistants"
     }
   },
   "outro": {
     "headline": "That's the chain.",
-    "text": "Tap any step to see who makes it, where, how concentrated it is and what it costs, with a dated source for every number."
+    "text": "Tap any box to open it up: who makes it, where, how concentrated it is and what it costs, with a dated source for every number."
   },
   "labels": {
     "euv-lithography": "EUV scanners",
@@ -83,7 +103,17 @@
     "grid-power": "Grid power",
     "neoclouds": "Neoclouds",
     "hyperscalers": "Hyperscalers",
+    "web-crawl-data": "Web crawl data",
+    "licensed-content": "Licensed content",
+    "human-data": "Human data & feedback",
+    "ml-frameworks": "AI software stack",
+    "frontier-models": "Frontier models",
+    "open-weight-models": "Open-weight models",
+    "model-apis": "Model APIs",
     "inference-providers": "Inference providers",
-    "serving-engines": "Serving engines"
+    "serving-engines": "Serving engines",
+    "chat-assistants": "Chat assistants",
+    "coding-agents": "Coding agents",
+    "enterprise-ai": "Enterprise AI"
   }
 }

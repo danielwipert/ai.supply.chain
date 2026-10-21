@@ -66,7 +66,7 @@
       <h2 class="flow-title mono">Fed by</h2>
       {% for n in fed_by %}
       <a class="flow-link" href="{{ root }}c/{{ n.id }}/" style="--tc: var(--{{ n.tier|lower }})"><span class="mono">{{ n.tier }}</span> {{ n.label }}</a>
-      {% else %}<p class="muted small">Start of the chain (raw materials are coming in v2).</p>{% endfor %}
+      {% else %}<p class="muted small">Start of the chain.</p>{% endfor %}
     </div>
     <div class="flow-this" aria-hidden="true">
       <span class="flow-arrow"></span>

@@ -21,6 +21,8 @@ MAX_TIER_DISTANCE = 2
 # Exception (docs/decisions.md, gate 2026-10-20): fab equipment may feed any tier that runs fabs.
 EQUIPMENT_TIER = "T1"
 FAB_TIERS = {"T2", "T4"}
+# The map's two streams and the trunk they merge into (docs/decisions.md, 2026-10-21).
+STREAMS = {"compute", "data", "trunk"}
 
 
 def tier_link_allowed(tier_a: str, tier_b: str, tier_order: dict) -> bool:
@@ -146,6 +148,9 @@ def validate(data_dir: Path = DATA_DIR, strict: bool = False) -> Report:
     if len(set(tier_ids)) != len(tier_ids):
         report.errors.append("tiers.json: duplicate tier IDs")
     tier_order = {t["id"]: t["order"] for t in tiers}
+    for t in tiers:
+        if t.get("stream") not in STREAMS:
+            report.errors.append(f"tiers.json: {t['id']} has stream {t.get('stream')!r}, expected one of {sorted(STREAMS)}")
 
     roster_list = load_roster(data_dir)
     roster = {r["id"]: r for r in roster_list}
