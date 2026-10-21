@@ -168,3 +168,10 @@ def test_planned_link_too_far_fails(data_dir):
     euv["planned_customers"] = ["inference-providers"]
     (data_dir / "roster.json").write_text(json.dumps(roster))
     assert any("tiers apart" in e for e in validate(data_dir).errors)
+
+
+def test_tier_with_unknown_stream_fails(data_dir):
+    tiers = json.loads((data_dir / "tiers.json").read_text())
+    tiers[0]["stream"] = "lava"
+    (data_dir / "tiers.json").write_text(json.dumps(tiers))
+    assert any("stream" in e for e in validate(data_dir).errors)

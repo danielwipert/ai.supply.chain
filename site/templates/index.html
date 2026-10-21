@@ -1,106 +1,128 @@
 {% extends "base.html" %}
-{% from "macros.html" import status_chip %}
+
+{% macro tier_block(tier) %}
+{% set note = story.tiers[tier.id] %}
+<section class="tier" id="tier-{{ tier.id }}" data-tier="{{ tier.id }}"
+         style="--tc: var(--{{ tier.id|lower }})" aria-labelledby="tier-name-{{ tier.id }}">
+  <header class="tier-head">
+    <span class="tier-dot" aria-hidden="true"></span>
+    <span class="tier-num mono">{{ tier.id }}</span>
+    <h2 id="tier-name-{{ tier.id }}"><a href="t/{{ tier.id }}/">{{ tier.name }}</a></h2>
+  </header>
+  <div class="tier-note">
+    <h3>{{ note.headline }}</h3>
+    <p>{{ note.text }}</p>
+  </div>
+  <div class="tier-nodes">
+    {% for n in node_by_id.values() if n.tier == tier.id %}
+    <a class="node{% if n.id == note.spotlight %} is-spotlight{% endif %}" href="c/{{ n.id }}/"
+       data-id="{{ n.id }}" data-status="{{ n.status }}" aria-expanded="false" aria-controls="explode-{{ tier.id }}">
+      <span class="node-label">{{ n.label }}</span>
+      <span class="node-makers">{{ n.makers }}</span>
+      <span class="node-dot" title="{{ n.status|capitalize }}"></span>
+    </a>
+    {% endfor %}
+  </div>
+  <div class="explode" id="explode-{{ tier.id }}" aria-live="polite"><div class="explode-inner"></div></div>
+</section>
+{% endmacro %}
 
 {% block main %}
 <section class="hero">
   <p class="eyebrow mono"><span class="pulse"></span> Open reference · v1 in progress</p>
   <h1>{{ story.intro.headline }}</h1>
   <div class="hero-text">
-  <p class="lead">{{ story.intro.text }}</p>
-  <div class="hero-actions">
-    <button class="btn btn-primary" type="button" data-story-start>
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-      Follow the chain
-    </button>
-    <a class="btn btn-ghost" href="#map">Explore the map</a>
-  </div>
+    <p class="lead">{{ story.intro.text }}</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" type="button" data-story-start>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Follow the chain
+      </button>
+      <a class="btn btn-ghost" href="about/">How it's sourced</a>
+    </div>
   </div>
 </section>
 
-<section class="map-wrap" aria-label="Supply chain map">
-  <div class="map-rail mono" aria-hidden="true">
-    <span>Upstream · raw machines</span>
-    <span class="rail-line"></span>
-    <span>Downstream · your answer</span>
-  </div>
+<div class="map-layout">
+  <div class="map" id="map">
+    <svg class="spine" aria-hidden="true"></svg>
 
-  <div class="map" id="map" data-step="0">
-    <svg class="edges" aria-hidden="true"></svg>
-    {% for tier in tiers %}
-    {% set note = story.tiers[tier.id] %}
-    <section class="tier" id="tier-{{ tier.id }}" data-tier="{{ tier.id }}" data-step="{{ loop.index }}"
-             style="--tc: var(--{{ tier.id|lower }})" aria-labelledby="tier-name-{{ tier.id }}">
-      <header class="tier-head">
-        <span class="tier-num mono">{{ tier.id }}</span>
-        <h2 id="tier-name-{{ tier.id }}">{{ tier.name }}</h2>
-      </header>
-      <div class="tier-note">
-        <h3>{{ note.headline }}</h3>
-        <p>{{ note.text }}</p>
+    <div class="fork">
+      {% for key in ("compute", "data") %}
+      <div class="stream stream-{{ key }}" data-stream="{{ key }}">
+        <header class="stream-head">
+          <span class="stream-dot" aria-hidden="true"></span>
+          <span class="mono stream-kicker">{{ "Stream 1" if key == "compute" else "Stream 2" }}</span>
+          <strong>{{ story.streams[key].name }}</strong>
+          <span class="muted">{{ story.streams[key].text }}</span>
+        </header>
+        {% for tier in streams[key] %}{{ tier_block(tier) }}{% endfor %}
       </div>
-      <div class="tier-nodes">
-        {% for n in node_by_id.values() if n.tier == tier.id %}
-        <a class="node{% if n.id == note.spotlight %} is-spotlight{% endif %}" href="c/{{ n.id }}/"
-           data-id="{{ n.id }}" data-status="{{ n.status }}">
-          <span class="node-label">{{ n.label }}</span>
-          <span class="node-makers">{{ n.makers }}</span>
-          <span class="node-dot" title="{{ n.status|capitalize }}"></span>
-        </a>
-        {% endfor %}
-      </div>
-    </section>
-    {% endfor %}
-    <div class="tier-note map-outro">
+      {% endfor %}
+    </div>
+
+    <div class="merge" id="merge">
+      <span class="merge-dot" aria-hidden="true"></span>
+      <strong>{{ story.streams.merge.name }}</strong>
+      <span>{{ story.streams.merge.text }}</span>
+    </div>
+
+    <div class="stream stream-trunk" data-stream="trunk">
+      {% for tier in streams.trunk %}{{ tier_block(tier) }}{% endfor %}
+    </div>
+
+    <div class="map-outro" id="map-end">
+      <span class="end-dot" aria-hidden="true"></span>
       <h3>{{ story.outro.headline }}</h3>
       <p>{{ story.outro.text }}</p>
     </div>
   </div>
 
-  <div class="story-panel" id="story" aria-live="polite">
-    <div class="story-steps" role="tablist" aria-label="Story steps">
-      <button type="button" role="tab" data-go="0" aria-label="Introduction"></button>
-      {% for tier in tiers %}
-      <button type="button" role="tab" data-go="{{ loop.index }}" style="--tc: var(--{{ tier.id|lower }})"
-              aria-label="{{ tier.id }} {{ tier.name }}"></button>
+  <aside class="story-rail" aria-label="Story">
+    <div class="rail-card" aria-live="polite">
+      <p class="rail-kicker mono" data-rail-kicker>Start here</p>
+      <h3 data-rail-headline>{{ story.intro.headline }}</h3>
+      <p data-rail-text>Scroll down the map, or press <b>Next</b> to walk the chain one step at a time. Click any box to open it up.</p>
+      <div class="rail-nav">
+        <button class="btn btn-ghost btn-icon" type="button" data-rail-prev aria-label="Previous step">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+        </button>
+        <button class="btn btn-primary" type="button" data-rail-next>
+          <span data-rail-next-label>Start</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="rail-steps" aria-label="Jump to a tier">
+      {% for key in ("compute", "data", "trunk") %}
+      <p class="rail-group mono">{{ story.streams[key].name if key != "trunk" else "One stream" }}</p>
+      {% for tier in streams[key] %}
+      <a href="#tier-{{ tier.id }}" data-step-link="{{ tier.id }}" style="--tc: var(--{{ tier.id|lower }})">
+        <span class="mono">{{ tier.id }}</span> {{ tier.name }}
+      </a>
       {% endfor %}
-      <button type="button" role="tab" data-go="{{ tiers|length + 1 }}" aria-label="The whole chain"></button>
+      {% endfor %}
+    </nav>
+    <div class="legend">
+      <span><span class="node-dot" data-status="approved"></span> Approved</span>
+      <span><span class="node-dot" data-status="verified"></span> Verified</span>
+      <span><span class="node-dot" data-status="draft"></span> Draft</span>
+      <span><span class="node-dot" data-status="planned"></span> Planned</span>
     </div>
-    <div class="story-body">
-      <p class="story-kicker mono" data-story-kicker>Start here</p>
-      <h3 data-story-headline>{{ story.intro.headline }}</h3>
-      <p data-story-text>Press <b>Next</b> to walk the chain one step at a time, or tap any box on the map.</p>
-    </div>
-    <div class="story-nav">
-      <button class="btn btn-ghost btn-icon" type="button" data-story-prev aria-label="Previous step">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button class="btn btn-primary" type="button" data-story-next>
-        <span data-next-label>Next</span>
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="legend">
-    <span><span class="node-dot" data-status="approved"></span> Approved</span>
-    <span><span class="node-dot" data-status="verified"></span> Verified</span>
-    <span><span class="node-dot" data-status="draft"></span> Draft</span>
-    <span><span class="node-dot" data-status="planned"></span> Planned</span>
-    <span class="legend-tip">Hover or tap a box to trace what feeds it and what it feeds.</span>
-  </div>
-</section>
+  </aside>
+</div>
 
 <section class="deeper">
   <h2>Go deeper</h2>
   <div class="deeper-grid">
     <a class="deeper-card" href="t/T1/">
-      <span class="mono deeper-kicker">Layer 2</span>
-      <strong>Walk the nine tiers</strong>
+      <span class="mono deeper-kicker">Tiers</span>
+      <strong>Walk the tiers one by one</strong>
       <span>Each step of the chain on its own page, with every component in it.</span>
     </a>
     <a class="deeper-card" href="c/hbm/">
-      <span class="mono deeper-kicker">Layer 3</span>
-      <strong>Open a component card</strong>
+      <span class="mono deeper-kicker">Cards</span>
+      <strong>Open a full component card</strong>
       <span>Makers, market share, cost and flow. Every number has a source and a date.</span>
     </a>
     <a class="deeper-card" href="about/">
@@ -110,16 +132,6 @@
     </a>
   </div>
 </section>
-
-<aside class="drawer" id="drawer" aria-label="Component preview" aria-hidden="true" inert>
-  <div class="drawer-scrim" data-drawer-close></div>
-  <div class="drawer-panel" role="dialog" aria-modal="false" aria-labelledby="drawer-title">
-    <button class="btn btn-ghost btn-icon drawer-close" type="button" data-drawer-close aria-label="Close preview">
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <div data-drawer-body></div>
-  </div>
-</aside>
 
 <script id="map-data" type="application/json">{{ bundle_json|safe }}</script>
 {% endblock %}

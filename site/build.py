@@ -72,6 +72,30 @@ def format_band(band, unit) -> str:
 
 # ---------- the graph ----------
 
+def node_detail(card) -> dict | None:
+    """What a box shows when it explodes open on the map. None until the card is written."""
+    if not card:
+        return None
+    makers = []
+    for m in card.get("makers", []):
+        share = m.get("market_share") or {}
+        makers.append({
+            "company": m["company"],
+            "country": m.get("country"),
+            "share": share.get("value"),
+            "share_text": format_value(share),
+            "confidence": share.get("confidence"),
+        })
+    label = card.get("concentration", {}).get("label")
+    return {
+        "makers": makers,
+        "concentration_rule": CONCENTRATION_RULES.get(label) if label else None,
+        "price": format_band(card.get("cost", {}).get("price_band"), card.get("cost", {}).get("unit")),
+        "lead_time": format_value(card.get("lead_time")),
+        "why": card.get("chokepoint_notes") or "",
+    }
+
+
 def build_graph(tiers, roster, components, story):
     """One node per roster entry, edges from cards where written, else from the roster plan."""
     tier_ids = [t["id"] for t in tiers]
@@ -87,6 +111,8 @@ def build_graph(tiers, roster, components, story):
             "summary": (card or {}).get("summary") or "",
             "status": card["meta"]["status"] if card else "planned",
             "concentration": (card or {}).get("concentration", {}).get("label"),
+            "alternatives": r.get("alternatives"),
+            "detail": node_detail(card),
         })
 
     edges = set()
@@ -111,7 +137,10 @@ def page_root(depth: int) -> str:
     return "../" * depth if depth else "./"
 
 
-def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None = None) -> Path:
+def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None = None,
+          base_url: str = "/") -> Path:
+    """base_url is where the site lives on its domain ("/" for its own domain, "/repo-name/" on github.io).
+    Only the 404 page needs it: every other page links with relative paths."""
     today = today or date.today()
     tiers = load_tiers(data_dir)
     roster = load_roster(data_dir)
@@ -120,6 +149,7 @@ def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None
     nodes, edges = build_graph(tiers, roster, components, story)
     node_by_id = {n["id"]: n for n in nodes}
     tier_by_id = {t["id"]: t for t in tiers}
+    streams = {name: [t for t in tiers if t.get("stream") == name] for name in ("compute", "data", "trunk")}
 
     env = Environment(
         loader=FileSystemLoader(SITE_DIR / "templates"),
@@ -130,7 +160,7 @@ def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None
     env.filters["value"] = format_value
     env.filters["fresh"] = lambda v: freshness(v, today)
     env.globals.update(
-        story=story, tiers=tiers, tier_by_id=tier_by_id, node_by_id=node_by_id,
+        story=story, tiers=tiers, tier_by_id=tier_by_id, node_by_id=node_by_id, streams=streams,
         rules=CONCENTRATION_RULES, confidence_text=CONFIDENCE_TEXT, format_band=format_band,
         built_on=today.isoformat(), domain=DOMAIN,
     )
@@ -152,8 +182,8 @@ def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None
     # "<\/" keeps any text in the data from closing the <script> tag it is embedded in.
     render("index.html", "index.html", 0, bundle_json=json.dumps(bundle).replace("</", "<\\/"), page="map")
     render("about.html", "about/index.html", 1, page="about")
-    # GitHub Pages serves 404.html at any missing URL, so its links must start from the domain root.
-    render("404.html", "404.html", 0, page="404", root="/")
+    # GitHub Pages serves 404.html at any missing URL, so its links can't be relative.
+    render("404.html", "404.html", 0, page="404", root=base_url)
 
     for i, tier in enumerate(tiers):
         render(
@@ -182,8 +212,9 @@ def build(out: Path = DEFAULT_OUT, data_dir: Path = DATA_DIR, today: date | None
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--base-url", default="/", help='where the site lives, e.g. "/ai.supply.chain/" on github.io')
     args = parser.parse_args(argv)
-    out = build(args.out)
+    out = build(args.out, base_url=args.base_url)
     print(f"Built {sum(1 for _ in out.rglob('*.html'))} pages into {out}")
     return 0
 
