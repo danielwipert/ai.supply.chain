@@ -2,8 +2,8 @@
   "id": "euv-lithography",
   "tier": "T1",
   "name": "EUV lithography scanners",
-  "summary": "",
-  "what_it_does": "",
+  "summary": "The machines that print the smallest features on every leading-edge chip. ASML is the only company that makes them.",
+  "what_it_does": "An EUV (extreme ultraviolet) scanner shines very short-wavelength light through a patterned mask onto a silicon wafer, printing the tiniest features of a chip. Shorter light means smaller features, and smaller features mean faster, more efficient chips.\n\nEvery leading-edge logic chip and the newest memory depend on EUV. One company, ASML in the Netherlands, builds these machines, using parts from a deep network of specialist suppliers.",
   "makers": [
     {
       "company": "ASML",

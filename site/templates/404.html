@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Not found · {{ story.title }}{% endblock %}
+{% block main %}
+<article class="prose">
+  <p class="eyebrow mono">404</p>
+  <h1>This link fell out of the supply chain.</h1>
+  <p class="lead">The page you're looking for doesn't exist. Head back to the map and follow the chain from there.</p>
+  <p><a class="btn btn-primary" href="/">Back to the map</a></p>
+</article>
+{% endblock %}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}{{ story.title }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ story.tagline }}{% endblock %}">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.description() }}">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="{{ root }}static/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ root }}static/style.css">
+  <script>
+    // Apply a saved light/dark choice before the page paints.
+    try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body class="page-{{ page }}">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="{{ root }}">
+      <img src="{{ root }}static/icon.svg" alt="" width="28" height="28">
+      <span>{% if story.title.startswith("The ") %}<span class="brand-the">The </span>{{ story.title[4:] }}{% else %}{{ story.title }}{% endif %}</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="{{ root }}" {% if page == "map" %}aria-current="page"{% endif %}>Map</a>
+      <a href="{{ root }}t/T1/" {% if page == "tier" %}aria-current="page"{% endif %}>Tiers</a>
+      <a href="{{ root }}about/" {% if page == "about" %}aria-current="page"{% endif %}>Method</a>
+      <button class="theme-toggle" type="button" aria-label="Switch light or dark theme" data-theme-toggle>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="sun" d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.66-5.66 1.41-1.41M4.93 19.07l1.41-1.41m0-11.32L4.93 4.93m14.14 14.14-1.41-1.41M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/><path class="moon" d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+    {% block main %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>{{ story.title }}</strong> · an open, sourced reference by
+      <a href="https://aiautomations.ai">AI Automations</a>.
+    </div>
+    <div class="muted">
+      Built {{ built_on }} · <a href="{{ root }}about/">How the numbers are checked</a> ·
+      <a href="{{ root }}components.json">Data (JSON)</a>
+    </div>
+  </footer>
+  <script src="{{ root }}static/site.js" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -153,3 +153,18 @@ def test_tier_distance_too_far_fails(data_dir):
     write(data_dir, make_card("leading-edge-fab", "T2", customers=["gpu-servers-oem"]))
     write(data_dir, make_card("gpu-servers-oem", "T6", inputs=["leading-edge-fab"]))
     assert any("tiers apart" in e for e in validate(data_dir).errors)
+
+
+def test_planned_link_to_unknown_id_fails(data_dir):
+    roster = json.loads((data_dir / "roster.json").read_text())
+    roster[0]["planned_customers"] = ["no-such-thing"]
+    (data_dir / "roster.json").write_text(json.dumps(roster))
+    assert any("no-such-thing" in e for e in validate(data_dir).errors)
+
+
+def test_planned_link_too_far_fails(data_dir):
+    roster = json.loads((data_dir / "roster.json").read_text())
+    euv = next(r for r in roster if r["id"] == "euv-lithography")
+    euv["planned_customers"] = ["inference-providers"]
+    (data_dir / "roster.json").write_text(json.dumps(roster))
+    assert any("tiers apart" in e for e in validate(data_dir).errors)

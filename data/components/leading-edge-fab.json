@@ -2,8 +2,8 @@
   "id": "leading-edge-fab",
   "tier": "T2",
   "name": "Leading-edge logic fabrication (3nm/2nm class)",
-  "summary": "",
-  "what_it_does": "",
+  "summary": "The factories that make the most advanced chips. Nearly all leading-edge AI chips come from TSMC.",
+  "what_it_does": "A foundry takes a chip design and manufactures it on silicon wafers, using hundreds of process steps and machines like EUV scanners. The leading edge (3nm and 2nm class) is where the fastest, most power-efficient chips are made.\n\nAI chip designers such as Nvidia, AMD, Google and Amazon don't own factories. They send their designs to a foundry, and at the leading edge that foundry is almost always TSMC, most of whose capacity is in Taiwan.",
   "makers": [
     {
       "company": "TSMC",

@@ -2,8 +2,8 @@
   "id": "hbm",
   "tier": "T4",
   "name": "High-bandwidth memory (HBM3E / HBM4)",
-  "summary": "",
-  "what_it_does": "",
+  "summary": "Stacked DRAM placed next to the GPU die. Every modern AI accelerator needs it, and only three companies make it.",
+  "what_it_does": "High-bandwidth memory (HBM) stacks several DRAM chips on top of each other and connects them with thousands of tiny vertical wires. The stack sits right next to the processor, so data moves between memory and compute far faster than with ordinary memory.\n\nAI chips spend much of their time waiting for data, so HBM is often what limits their speed. SK Hynix, Samsung and Micron are the only makers, and HBM is joined to the processor in the advanced packaging step.",
   "makers": [
     {
       "company": "SK Hynix",
