@@ -1,0 +1,89 @@
+{
+  "_note": "Narration for the map walk-through. Plain English, no numbers: numbers live in the sourced cards. Edit freely.",
+  "title": "The AI Supply Chain",
+  "tagline": "From EUV scanner to inference API. Every number sourced.",
+  "intro": {
+    "headline": "Every AI answer has a supply chain.",
+    "text": "When a chatbot answers you, it runs on chips that were printed by one-of-a-kind machines, stacked with special memory, packed into servers, and plugged into buildings that draw as much power as a small city. Follow it step by step, and you'll see that a few companies at a few steps hold the whole thing together."
+  },
+  "tiers": {
+    "T1": {
+      "headline": "Machines that print chips",
+      "text": "Chips are made by shining light through a pattern onto silicon. The newest chips need extreme ultraviolet (EUV) light, and only one company in the world builds those machines.",
+      "spotlight": "euv-lithography"
+    },
+    "T2": {
+      "headline": "Factories that make the chips",
+      "text": "Those machines go into fabs, the factories that turn silicon wafers into chips. At the leading edge, almost every AI chip is made by one company, mostly on one island.",
+      "spotlight": "leading-edge-fab"
+    },
+    "T3": {
+      "headline": "Companies that design the chips",
+      "text": "Nvidia, AMD, Google, Amazon and others design AI chips, but they don't own the factories. They send their designs to the foundries. Nvidia leads, and the big cloud companies are building their own chips to depend on it less.",
+      "spotlight": "nvidia-gpu"
+    },
+    "T4": {
+      "headline": "Memory stacked next to the chip",
+      "text": "AI chips are hungry for data, so they sit beside towers of stacked memory called HBM. Only three companies make it, and supply is tight.",
+      "spotlight": "hbm"
+    },
+    "T5": {
+      "headline": "Packaging: chip and memory become one",
+      "text": "The chip and its memory are joined on one base so data can move between them fast. This step sounds minor, but it has been one of the biggest bottlenecks in AI hardware.",
+      "spotlight": "cowos-packaging"
+    },
+    "T6": {
+      "headline": "Servers and the network between them",
+      "text": "Packaged chips go into servers, and thousands of servers are wired together so they act like one giant computer. The network matters as much as the chips.",
+      "spotlight": "nvlink-infiniband"
+    },
+    "T7": {
+      "headline": "Buildings, cooling and power",
+      "text": "Servers need data centers, liquid cooling and lots of electricity. Today the slowest part of building AI capacity is often getting enough power: transformers, switchgear and a grid connection.",
+      "spotlight": "grid-power"
+    },
+    "T8": {
+      "headline": "Clouds that rent out the compute",
+      "text": "Hyperscalers like AWS, Azure and Google Cloud, and newer neoclouds like CoreWeave, own the GPUs and rent them out by the hour to AI labs and companies.",
+      "spotlight": "hyperscalers"
+    },
+    "T9": {
+      "headline": "Serving the answer to you",
+      "text": "Inference providers and serving software run the trained models and stream the answer back, token by token. This is the end of the chain: the part you actually see.",
+      "spotlight": "inference-providers"
+    }
+  },
+  "outro": {
+    "headline": "That's the chain.",
+    "text": "Tap any step to see who makes it, where, how concentrated it is and what it costs, with a dated source for every number."
+  },
+  "labels": {
+    "euv-lithography": "EUV scanners",
+    "duv-lithography": "DUV scanners",
+    "deposition-etch": "Deposition & etch",
+    "leading-edge-fab": "Leading-edge fab",
+    "samsung-foundry": "Samsung Foundry",
+    "intel-foundry": "Intel Foundry",
+    "nvidia-gpu": "Nvidia GPUs",
+    "amd-instinct": "AMD Instinct",
+    "google-tpu": "Google TPU",
+    "aws-trainium": "AWS Trainium",
+    "microsoft-maia": "Microsoft Maia",
+    "inference-asics": "Inference ASICs",
+    "hbm": "HBM memory",
+    "cowos-packaging": "CoWoS packaging",
+    "alt-packaging": "Alt. packaging",
+    "gpu-servers-oem": "OEM servers",
+    "gpu-servers-odm": "ODM servers",
+    "nvlink-infiniband": "NVLink & InfiniBand",
+    "ethernet-fabric": "AI Ethernet",
+    "dc-colocation": "Data centers",
+    "liquid-cooling": "Liquid cooling",
+    "power-equipment": "Electrical gear",
+    "grid-power": "Grid power",
+    "neoclouds": "Neoclouds",
+    "hyperscalers": "Hyperscalers",
+    "inference-providers": "Inference providers",
+    "serving-engines": "Serving engines"
+  }
+}

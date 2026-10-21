@@ -1,0 +1,50 @@
+{# Reusable pieces for the templates. #}
+
+{% macro tier_chip(tier_id, root, link=true) -%}
+  {%- set t = tier_by_id[tier_id] -%}
+  {%- if link %}<a class="tier-chip" style="--tc: var(--{{ tier_id|lower }})" href="{{ root }}t/{{ tier_id }}/">
+  {%- else %}<span class="tier-chip" style="--tc: var(--{{ tier_id|lower }})">{% endif -%}
+    <span class="mono">{{ tier_id }}</span> {{ t.name }}
+  {%- if link %}</a>{% else %}</span>{% endif -%}
+{%- endmacro %}
+
+{% macro status_chip(status) -%}
+  <span class="status status-{{ status }}" title="{{ {
+      'planned': 'Planned: research has not started',
+      'draft': 'Draft: written by the research pipeline, not yet checked',
+      'verified': 'Verified: checked against sources by a second model',
+      'approved': 'Approved: reviewed and signed off by a person'}[status] }}">
+    <span class="dot"></span>{{ status|capitalize }}
+  </span>
+{%- endmacro %}
+
+{# A sourced number: value plus a confidence pill and a freshness dot (spec 5.3, 7.3). #}
+{% macro sv(value_text, obj, card) -%}
+  {%- if value_text -%}
+    {%- set src = (card.sources | selectattr("id", "equalto", obj.source) | first) if obj.source else none -%}
+    <span class="sv" tabindex="0">
+      <span class="sv-value mono">{{ value_text }}</span>
+      {%- if obj.confidence %} <span class="conf conf-{{ obj.confidence }}">{{ obj.confidence }}</span>{% endif %}
+      <span class="fresh fresh-{{ obj.verified | fresh }}" aria-hidden="true"></span>
+      <span class="sv-tip" role="tooltip">
+        {% if obj.confidence %}<b>{{ obj.confidence|capitalize }} confidence.</b> {{ confidence_text[obj.confidence] }}<br>{% endif %}
+        Verified: {{ obj.verified or "not yet" }}
+        {%- if src %}<br>Source: {{ src.publisher }}, {{ src.date }}{% endif %}
+      </span>
+    </span>
+  {%- else -%}
+    <span class="pending">Pending research</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro node_card(n, root) -%}
+  <a class="node-card" href="{{ root }}c/{{ n.id }}/" style="--tc: var(--{{ n.tier|lower }})">
+    <span class="node-card-top">
+      <span class="node-card-label">{{ n.label }}</span>
+      {{ status_chip(n.status) }}
+    </span>
+    <span class="node-card-name">{{ n.name }}</span>
+    <span class="node-card-makers mono">{{ n.makers }}</span>
+    {% if n.summary %}<span class="node-card-summary">{{ n.summary }}</span>{% endif %}
+  </a>
+{%- endmacro %}

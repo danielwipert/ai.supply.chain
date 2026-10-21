@@ -154,6 +154,16 @@ def validate(data_dir: Path = DATA_DIR, strict: bool = False) -> Report:
     for r in roster_list:
         if r["tier"] not in tier_order:
             report.errors.append(f"roster.json: {r['id']} has unknown tier {r['tier']}")
+    # Planned links draw the map before a card exists; they follow the same graph rules.
+    for r in roster_list:
+        for ref in r.get("planned_customers", []):
+            if ref not in roster:
+                report.errors.append(f"roster.json: {r['id']} planned_customers -> {ref}: no such component ID")
+            elif r["tier"] in tier_order and roster[ref]["tier"] in tier_order and not tier_link_allowed(
+                r["tier"], roster[ref]["tier"], tier_order
+            ):
+                report.errors.append(f"roster.json: {r['id']} planned_customers -> {ref}: more than "
+                                     f"{MAX_TIER_DISTANCE} tiers apart")
 
     schema_validator = Draft202012Validator(load_schema(data_dir))
     components = load_components(data_dir)

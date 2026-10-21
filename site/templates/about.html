@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Method · {{ story.title }}{% endblock %}
+{% block description %}How every number on the AI Supply Chain map is sourced, checked and dated.{% endblock %}
+
+{% block main %}
+<article class="prose">
+  <p class="eyebrow mono">Method</p>
+  <h1>How the numbers are checked</h1>
+  <p class="lead">Most AI supply chain coverage is either a one-off explainer or a paywalled analyst deck.
+    This is an open, maintained reference: every number carries a dated source, a confidence rating,
+    and the date a person last checked it.</p>
+
+  <h2>The map</h2>
+  <p>The chain is split into nine tiers, from the machines that make chips (T1) to the services that
+    deliver AI answers (T9). Each box is a <em>component</em>: a product category such as "HBM memory",
+    not a company. Lines show what feeds what. Components still in the research queue use planned links,
+    which are replaced by sourced ones as each card is written.</p>
+
+  <h2>Confidence ratings</h2>
+  <ul class="key">
+    <li><span class="conf conf-high">high</span> {{ confidence_text.high }}</li>
+    <li><span class="conf conf-medium">medium</span> {{ confidence_text.medium }}</li>
+    <li><span class="conf conf-low">low</span> {{ confidence_text.low }}</li>
+  </ul>
+
+  <h2>Freshness</h2>
+  <ul class="key">
+    <li><span class="fresh fresh-green"></span> Verified in the last 90 days</li>
+    <li><span class="fresh fresh-amber"></span> Verified 90 to 180 days ago</li>
+    <li><span class="fresh fresh-red"></span> Verified more than 180 days ago</li>
+  </ul>
+
+  <h2>Concentration labels</h2>
+  <table class="table">
+    <thead><tr><th>Label</th><th>Rule</th></tr></thead>
+    <tbody>
+      {% for label, rule in rules.items() %}
+      <tr><td><span class="badge badge-{{ label }}">{{ label }}</span></td><td>{{ rule }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>The market concentration index (HHI) is recorded where it can be calculated, but the label is what you see.</p>
+
+  <h2>The research pipeline</h2>
+  <ol class="steps">
+    <li><strong>Draft.</strong> A fast model searches the web and fills in the card. Every number must cite a URL from the search results; it may leave a value blank but may not invent one.</li>
+    <li><strong>Verify.</strong> A stronger model from a different family reads every cited source and checks: does the source say this, is it current, is the confidence fair?</li>
+    <li><strong>Approve.</strong> A person reviews the card and the verification report, fixes what needs fixing, and signs it off. Nothing is marked approved without that step.</li>
+    <li><strong>Refresh.</strong> Every month the pipeline re-runs on approved cards and proposes changes for review.</li>
+  </ol>
+
+  <h2>Card status</h2>
+  <ul class="key">
+    <li><span class="status status-planned"><span class="dot"></span>Planned</span> Research has not started.</li>
+    <li><span class="status status-draft"><span class="dot"></span>Draft</span> Written by the pipeline, not yet checked.</li>
+    <li><span class="status status-verified"><span class="dot"></span>Verified</span> Checked against its sources by a second model.</li>
+    <li><span class="status status-approved"><span class="dot"></span>Approved</span> Reviewed and signed off by a person.</li>
+  </ul>
+
+  <h2>Spotted an error?</h2>
+  <p>Corrections are welcome. Open an issue on the project's GitHub repository with the card, the number,
+    and a source.</p>
+</article>
+{% endblock %}

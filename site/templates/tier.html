@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import node_card %}
+
+{% block title %}{{ tier.id }} {{ tier.name }} · {{ story.title }}{% endblock %}
+{% block description %}{{ story.tiers[tier.id].text }}{% endblock %}
+
+{% block main %}
+{% set note = story.tiers[tier.id] %}
+<article class="tier-page" style="--tc: var(--{{ tier.id|lower }})">
+  <nav class="tier-strip" aria-label="All tiers">
+    {% for t in tiers %}
+    <a href="{{ root }}t/{{ t.id }}/" style="--tc: var(--{{ t.id|lower }})" class="mono"
+       {% if t.id == tier.id %}aria-current="page"{% endif %} title="{{ t.name }}">{{ t.id }}</a>
+    {% endfor %}
+  </nav>
+
+  <header class="tier-page-head">
+    <p class="eyebrow mono">Tier {{ tier.order }} of {{ tiers|length }} · {{ tier.covers }}</p>
+    <h1>{{ tier.name }}</h1>
+    <p class="lead"><strong>{{ note.headline }}.</strong> {{ note.text }}</p>
+    <a class="btn btn-ghost" href="{{ root }}#tier-{{ tier.id }}">See it on the map</a>
+  </header>
+
+  <div class="node-grid">
+    {% for n in nodes %}{{ node_card(n, root) }}{% endfor %}
+  </div>
+
+  <nav class="pager">
+    {% if prev %}<a class="pager-link" href="{{ root }}t/{{ prev.id }}/"><span class="mono muted">← {{ prev.id }}</span> {{ prev.name }}</a>{% else %}<span></span>{% endif %}
+    {% if next %}<a class="pager-link next" href="{{ root }}t/{{ next.id }}/"><span class="mono muted">{{ next.id }} →</span> {{ next.name }}</a>{% endif %}
+  </nav>
+</article>
+{% endblock %}

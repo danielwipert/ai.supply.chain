@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% from "macros.html" import tier_chip, status_chip, sv %}
+
+{% block title %}{{ node.label }} · {{ story.title }}{% endblock %}
+{% block description %}{{ node.summary or node.name }}{% endblock %}
+
+{% block main %}
+<article class="card-page" style="--tc: var(--{{ node.tier|lower }})">
+  <nav class="crumbs mono" aria-label="Breadcrumb">
+    <a href="{{ root }}">Map</a><span>/</span>
+    <a href="{{ root }}t/{{ node.tier }}/">{{ node.tier }} {{ tier_by_id[node.tier].name }}</a><span>/</span>
+    <span aria-current="page">{{ node.label }}</span>
+  </nav>
+
+  {# ---------- Layer 1: the quick read ---------- #}
+  <header class="card-head">
+    <div class="card-chips">
+      {{ tier_chip(node.tier, root) }}
+      {{ status_chip(node.status) }}
+      {% if card and card.concentration.label %}
+      <span class="badge badge-{{ card.concentration.label }}">{{ card.concentration.label }}</span>
+      {% endif %}
+    </div>
+    <h1>{{ node.name }}</h1>
+    {% if node.summary %}
+    <p class="lead">{{ node.summary }}</p>
+    {% else %}
+    <p class="lead">Made by {{ node.makers }}{% if roster_entry.alternatives %}. Alternatives: {{ roster_entry.alternatives }}{% endif %}.</p>
+    {% endif %}
+  </header>
+
+  {% if not card %}
+  <div class="notice">
+    <strong>This card is in the research queue.</strong>
+    Its numbers will appear here once they have been drafted, checked against sources, and approved.
+    Until then, here's where it sits in the chain.
+  </div>
+  {% endif %}
+
+  <section class="glance" aria-label="At a glance">
+    <div class="tile">
+      <span class="tile-label">Main makers</span>
+      <span class="tile-value">{{ node.makers }}</span>
+    </div>
+    <div class="tile">
+      <span class="tile-label">Concentration</span>
+      {% if card and card.concentration.label %}
+      <span class="tile-value cap">{{ card.concentration.label }}</span>
+      <span class="tile-note">{{ rules[card.concentration.label] }}</span>
+      {% else %}<span class="pending">Pending research</span>{% endif %}
+    </div>
+    <div class="tile">
+      <span class="tile-label">Price{% if card and card.cost.unit %} ({{ card.cost.unit }}){% endif %}</span>
+      {% if card %}{{ sv(format_band(card.cost.price_band, ""), card.cost.price_band, card) }}
+      {% else %}<span class="pending">Pending research</span>{% endif %}
+    </div>
+    <div class="tile">
+      <span class="tile-label">Lead time</span>
+      {% if card %}{{ sv(card.lead_time | value, card.lead_time, card) }}
+      {% else %}<span class="pending">Pending research</span>{% endif %}
+    </div>
+  </section>
+
+  <section class="flow" aria-label="Where it sits in the chain">
+    <div class="flow-col">
+      <h2 class="flow-title mono">Fed by</h2>
+      {% for n in fed_by %}
+      <a class="flow-link" href="{{ root }}c/{{ n.id }}/" style="--tc: var(--{{ n.tier|lower }})"><span class="mono">{{ n.tier }}</span> {{ n.label }}</a>
+      {% else %}<p class="muted small">Start of the chain (raw materials are coming in v2).</p>{% endfor %}
+    </div>
+    <div class="flow-this" aria-hidden="true">
+      <span class="flow-arrow"></span>
+      <span class="flow-node">{{ node.label }}</span>
+      <span class="flow-arrow"></span>
+    </div>
+    <div class="flow-col">
+      <h2 class="flow-title mono">Feeds</h2>
+      {% for n in feeds %}
+      <a class="flow-link" href="{{ root }}c/{{ n.id }}/" style="--tc: var(--{{ n.tier|lower }})"><span class="mono">{{ n.tier }}</span> {{ n.label }}</a>
+      {% else %}<p class="muted small">End of the chain: answers delivered to you.</p>{% endfor %}
+    </div>
+  </section>
+
+  {# ---------- Layer 2: the detail ---------- #}
+  {% if card %}
+  <div class="card-body">
+    <section class="block">
+      <h2>What it does</h2>
+      {% if card.what_it_does %}
+        {% for para in card.what_it_does.split("\n\n") %}<p>{{ para }}</p>{% endfor %}
+      {% else %}<p class="pending">Pending research</p>{% endif %}
+    </section>
+
+    <section class="block">
+      <h2>Who makes it</h2>
+      <div class="makers">
+        {% for m in card.makers %}
+        <div class="maker">
+          <div class="maker-name"><strong>{{ m.company }}</strong> <span class="mono muted">{{ m.country }}</span></div>
+          <div class="maker-where">
+            {% if m.fab_locations %}{{ m.fab_locations|join(" · ") }}{% elif m.hq_city %}{{ m.hq_city }}{% else %}<span class="muted">Locations pending</span>{% endif %}
+          </div>
+          <div class="maker-share">
+            <span class="tile-label">Market share</span>
+            {{ sv(m.market_share | value, m.market_share, card) }}
+            {% if m.market_share.value is not none %}
+            <span class="share-bar"><span style="width: {{ (m.market_share.value * 100)|round(1) }}%"></span></span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>How concentrated is it?</h2>
+      {% if card.concentration.label %}
+      <p><span class="badge badge-{{ card.concentration.label }}">{{ card.concentration.label }}</span>
+         <span class="muted">Rule met: {{ rules[card.concentration.label] }}</span></p>
+      {% endif %}
+      {% if card.concentration.note %}<p>{{ card.concentration.note }}</p>{% endif %}
+      <p class="small">Market concentration index (HHI): {{ sv(card.concentration.hhi | value, card.concentration.hhi, card) }}</p>
+    </section>
+
+    <section class="block">
+      <h2>What it costs</h2>
+      <p>{{ sv(format_band(card.cost.price_band, card.cost.unit), card.cost.price_band, card) }}</p>
+      {% if card.cost.note %}<p>{{ card.cost.note }}</p>{% endif %}
+    </section>
+
+    <section class="block">
+      <h2>Why it matters</h2>
+      {% if card.chokepoint_notes %}<p>{{ card.chokepoint_notes }}</p>
+      {% else %}<p class="pending">Pending research</p>{% endif %}
+    </section>
+  </div>
+
+  {# ---------- Layer 3: for experts ---------- #}
+  <details class="expert">
+    <summary>
+      <span><strong>For experts:</strong> sources, confidence and card data</span>
+      <span class="mono muted">{{ card.sources|length }} source{{ "" if card.sources|length == 1 else "s" }}</span>
+    </summary>
+    <div class="expert-body">
+      <h3>Sources</h3>
+      {% if card.sources %}
+      <ol class="sources">
+        {% for s in card.sources %}
+        <li id="{{ s.id }}">
+          <a href="{{ s.url }}" rel="noopener">{{ s.title }}</a>
+          <span class="muted">{{ s.publisher }} · {{ s.date }} · {{ s.type }} · accessed {{ s.accessed }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}<p class="pending">No sources yet: this card is still a draft.</p>{% endif %}
+
+      <h3>How to read the markers</h3>
+      <ul class="key">
+        <li><span class="conf conf-high">high</span> {{ confidence_text.high }}</li>
+        <li><span class="conf conf-medium">medium</span> {{ confidence_text.medium }}</li>
+        <li><span class="conf conf-low">low</span> {{ confidence_text.low }}</li>
+        <li><span class="fresh fresh-green"></span> Verified within 90 days
+            <span class="fresh fresh-amber"></span> 90 to 180 days
+            <span class="fresh fresh-red"></span> Older</li>
+      </ul>
+
+      <h3>Card record</h3>
+      <dl class="meta">
+        <dt>Status</dt><dd>{{ card.meta.status }}</dd>
+        <dt>Drafted by</dt><dd>{{ card.meta.drafted_by or "—" }}</dd>
+        <dt>Verified by</dt><dd>{{ card.meta.verified_by or "—" }}</dd>
+        <dt>Approved</dt><dd>{% if card.meta.approved_by %}{{ card.meta.approved_by }}, {{ card.meta.approved_on }}{% else %}—{% endif %}</dd>
+        <dt>Last refreshed</dt><dd>{{ card.meta.last_refreshed or "—" }}</dd>
+      </dl>
+      <p><a class="btn btn-ghost" href="card.json">Download this card as JSON</a></p>
+    </div>
+  </details>
+  {% endif %}
+</article>
+{% endblock %}

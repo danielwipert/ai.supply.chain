@@ -21,7 +21,8 @@ pipeline/                  # research + validation scripts
   providers/               # LLM (OpenRouter), search (Tavily), fetch (readability)
   check_providers.py       # one real call to each provider, to test your keys
   reports/                 # verification reports (pipeline output)
-site/                      # static site build (coming)
+  story.json               # the words of the map's story + short box labels
+site/                      # static website (see site/README.md)
 pdf/                       # PDF build (coming)
 tests/                     # pytest tests
 docs/                      # spec, decisions
@@ -53,6 +54,15 @@ docs/                      # spec, decisions
 
 GitHub Actions runs steps 2 and 3 on every push.
 
+## Preview the website
+
+```bash
+python site/build.py                       # build the pages into site/dist/
+python -m http.server -d site/dist 8000    # then open http://localhost:8000
+```
+
+More in [`site/README.md`](site/README.md).
+
 ## API keys
 
 The research pipeline needs two keys, set as environment variables. Never put them in the code.
@@ -77,6 +87,7 @@ python -m pipeline.check_providers
 - [x] Pipeline: provider interfaces (LLM, search, fetch) in `pipeline/providers/`
 - [ ] Pipeline: `draft.py` and `verify.py` on the three cards
 - [ ] Dan approves the three cards
-- [ ] Site: flow map + component pages
+- [x] Site: flow map with built-in story, tier pages, component pages, method page
 - [ ] PDF: T4 Memory tier brief
-- [ ] GitHub Pages deploy
+- [x] GitHub Pages deploy workflow (`.github/workflows/deploy-site.yml`)
+- [ ] Turn on GitHub Pages + point `supplychain.aiautomations.ai` at it
